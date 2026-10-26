@@ -215,7 +215,11 @@ jobs:
       - name: Update docs/
         shell: bash
         working-directory: ci
+        # On top of the newest pages: the checkout is the commit the run
+        # started from, and an earlier run may have updated them since.
         run: |
+          git fetch -q origin main
+          git checkout -q -B main origin/main
           rm -rf docs
           cp -R "$RUNNER_TEMP/docs" docs
           git add -A docs
