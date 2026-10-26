@@ -22,6 +22,10 @@ description: 'Four looks, two sizes, a pill shape and the round icon-button.'
 
 <Example name="components/button/icon" />
 
+Over an image, `overlay` draws the button as a frosted light disc that reads on any poster in either theme; active, its icon is Admit ink. The heart on a programme card is one.
+
+<Example name="components/button/overlay" />
+
 ## States
 
 A toggle shows its state with its variant (`primary` when on) and `aria-pressed`. A button that is saving gets `disabled` and `aria-busy`: disabled buttons drop to 45% opacity, and a busy one shows the progress cursor.
@@ -34,3 +38,4 @@ A toggle shows its state with its variant (`primary` when on) and `aria-pressed`
 - Web code never writes a native `<button>`: `tests/ui-boundary.test.ts` fails on one.
 - Navigation is a link, never a button. A link drawn as a button is `ButtonLink` (or `IconButtonLink`) from `apps/web/src/router.tsx`, with the same props; `to` is a page on this site and `href` any other address.
 - Anything else that acts as a button, such as a Base UI trigger, spreads `buttonStyle()` or `iconButtonStyle()`.
+- Pages place buttons and never restyle them: a rule that changes a button’s padding, height, type or colours fails `tests/ui-boundary.test.ts`. A control that draws itself completely, such as a sticker or the spoiler shield, is `variant="plain"`.

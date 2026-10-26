@@ -1,14 +1,20 @@
 ---
 title: 'Select'
 group: 'Controls'
-description: 'A dropdown whose options are SelectOption children; no native select is rendered.'
+description: 'A dropdown whose options are SelectOption children, as a field or inline in a row of filters.'
 ---
 
 ## Example
 
-Options are `SelectOption` children. `Select` reads their values and labels and hands them to Base UI, so the page has no native `<select>`. The list opens 5px below the trigger instead of covering it; the selected option has a check, and disabled ones are faded.
+Options are `SelectOption` children. `Select` reads their values and labels and hands them to Base UI, so the page has no native `<select>`. The list opens 5px below the trigger instead of covering it; the selected option has a check, and disabled ones are faded. The trigger is a field: it takes the same `size` and `shape` as [Input](https://design.iff.day/components/input).
 
 <Example name="components/select/basic" height={180} />
+
+## Inline
+
+`variant="inline"` draws the field as text in a row of filters, such as Type: All in the festival directory, and shows a box only on hover. `active` turns it brand red once the filter is applied. An `Input` takes the same variant, with an underline in place of the box.
+
+<Example name="components/select/inline" />
 
 ## Usage
 

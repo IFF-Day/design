@@ -1,0 +1,22 @@
+---
+title: 'InputGroup'
+group: 'Controls'
+description: 'An icon and an input in one field: every search box on the site.'
+---
+
+## Example
+
+`InputGroup` is one field holding an icon and an `Input`. The group draws the box, its hover, its focus ring and its disabled state, and the input inside draws nothing, so a search box never shows a second box inside the first in any state. The header, the programme, the schedule, the festival directory, the films page and the search page all build their search this way.
+
+<Example name="components/input-group/search" />
+
+## In a filter row
+
+Every control in a row of filters takes the same size and shape. The programme and the schedule use base-size pills: the search, the selects and the Watchlist only toggle stand 38px tall.
+
+<Example name="components/input-group/filter-row" stage="fill" />
+
+## Usage
+
+- `icon` takes a glyph component, such as a Lucide icon, and draws it at the group’s size. Give the input its own `aria-label`; the icon is decoration.
+- Place the group with a class of your own (width, flex); its `size` and `shape` work as on [Input](https://design.iff.day/components/input).
