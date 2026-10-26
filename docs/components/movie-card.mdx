@@ -1,0 +1,21 @@
+---
+title: "MovieCard"
+group: "Film and community"
+description: "The programme card: poster, title, director and a Watchlist heart."
+---
+
+## Example
+
+A film in the programme. At rest the card shows the poster, the film’s overall score out of 10 in its upper left corner when it has one (see [CombinedScore](https://design.iff.day/components/combined-score)) and the section in its lower left corner. On hover the poster blurs into a ground for the title and a line with the director, year and running time; touch screens have no hover, so that text always shows there. The heart in the corner is Watchlist and appears on hover or once the film is on the watchlist. A click saves the reader’s mark, and a failure sends an error toast.
+
+<Example name="components/movie-card/grid" stage="fill">
+
+Marks here live in this page only and are gone after a reload.
+
+</Example>
+
+## Usage
+
+- It reads the reader’s marks from `useApp()`, so it only works inside `AppProvider`, as every page on the site is.
+- The link is the entry’s `canonicalPath`; without one it is built from the festival, edition and title, and as a last resort from the public number.
+- The heart is disabled with `aria-busy` until the marks have loaded.

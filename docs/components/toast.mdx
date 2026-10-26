@@ -1,0 +1,21 @@
+---
+title: "Toast"
+group: "Controls"
+description: "One notification at the bottom of the screen, gone after 6.5 seconds."
+---
+
+## Example
+
+At most three toasts are shown, centred 16px from the bottom. The newest sits at the bottom and older ones stack above it, 8px apart. The bar is black with 16px centred text. A success toast has a check on the left; an error toast is white on red with a cross. A plain toast leaves after 2 seconds and an error after 4 seconds. They rise in from below at 0.6 scale and leave the same way.
+
+<Example name="components/toast/basic">
+
+The first button sends a plain toast and the second an error.
+
+</Example>
+
+## Usage
+
+- Pages never render `NotificationHost` themselves; `AppProvider` puts it at the bottom of every page. A page calls `useApp().notify(message, type)`.
+- `message` can be a message key, such as an error key from the API, and is translated for the reader.
+- For saves use `useAction().run()`: it sends Saved, or your own text, on success, and an error toast on failure.

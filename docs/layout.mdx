@@ -1,0 +1,26 @@
+---
+title: "Layout"
+group: "Foundations"
+description: "A 1175px content width, 24px gutters, a 56px header and two breakpoints."
+---
+
+## Measures
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--container` | `1175px` | The widest the content gets; the header, the footer and every page body align to it |
+| `--gutter` | `24px`, `16px` on phones | The space between content and the window edge; Shelf uses it to run past the gutter on phones |
+| `--header-height` | `56px` | The header height; sticky bars on festival pages stop under it, and festival banners reach up behind it |
+
+## Breakpoints
+
+There are two, each written in the CSS that needs it; they are not tokens.
+
+| Width | What changes |
+| --- | --- |
+| `≤ 1020px` | Five- and six-column film grids drop to four columns |
+| `≤ 767px` | Phones: 16px gutters, three-column film grids, Shelf and CategoryTiles run to the screen edge, dialogs become bottom sheets and the main navigation moves into NavigationDrawer |
+
+## Spacing
+
+There are no spacing tokens. Each component sets its own spacing in its CSS: 7px between a button’s icon and text, 28px between rows and 18px between columns of a film grid, 52px between sections of a page (`.page-section`). For a new page, start from a similar existing page.

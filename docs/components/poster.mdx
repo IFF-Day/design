@@ -1,0 +1,23 @@
+---
+title: "Poster"
+group: "Film and community"
+description: "The poster for the reader’s language, the title on a tint without one, a blank card without a film."
+---
+
+## Which poster
+
+A film often has dozens of posters. `Poster` picks in this order: the poster the festival entry chose, the main poster for the reader’s language (for Simplified Chinese readers `zh-hans`, `zh-cn` and `zh-sg`, then `zh`), the film’s main poster, and last the entry’s own `posterUrl`. Traditional Chinese readers are never shown a Simplified or `zh` poster.
+
+<Example name="components/poster/sizes" />
+
+## No poster
+
+Without a poster, or when the image fails to load, a brand-colored panel shows the English title in its lower left corner. The entry ID picks the color, so a film always gets the same one. Without a film at all (a removed entry, an empty slot of a list cover) it draws a blank grey card that keeps the place. The poster is always 2:3 and as wide as its container; `size`, `xs` to `xl`, only scales the fallback title, from micro to heading.
+
+<Example name="components/poster/fallback" />
+
+## Usage
+
+- Posters live in R2 at addresses like `img.filmcdn.com/film-poster/…`; images from other sites are never linked directly.
+- With `to` the poster links to the film. It is a duplicate of the title link beside it, so it is left out of the tab order and hidden from screen readers; `className` names that frame, such as `tool-thumb` in list rows.
+- Every poster on the site is this component: film tiles, programme cards, list covers (`PosterStack`) and the thumbnails in plans, tickets and lists.

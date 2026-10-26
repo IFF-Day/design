@@ -1,0 +1,75 @@
+---
+title: "Colors"
+group: "Foundations"
+description: "The brand palette, and the semantic tokens built on it that switch with light and dark."
+---
+
+## Brand colors
+
+The mark uses three colors: Ink for its two planes and Admit for the red square, with Programme replacing Ink on dark grounds. The rest are the greys of the site’s dark mode, all neutral, with no hue. The light ground is plain white, never cream.
+
+- **Blackout** `#121212` The dark ground and the darkest text
+- **Ink** `#1A1917` The two planes of the mark
+- **Programme** `#F5F5F5` Text and the mark’s planes on dark; light panels
+- **Admit** `#E5391F` The brand color: the mark’s red square, stars and emphasis
+- **Signal** `#FFD21F` Warnings only; never in the mark
+- **Surface** `#1C1C1C` Cards in dark mode
+- **Raised** `#262626` Panels one step above cards in dark mode
+- **Line** `#3D3D3D` Dividers and outlines in dark mode
+- **Dust** `#9B9B9B` Secondary text on dark
+- **Ink 2** `#5A5A5A` Secondary text on light
+- **Admit ink** `#C42B16` Red text on light grounds, 5.67:1 on white
+- **--iffday-honor** `#ECD08A` Accreditations and awards on dark
+- **--iffday-honor-ink** `#7A5A12` Accreditations and awards on light
+
+## Semantic tokens
+
+Pages and components use only these names, never raw color values. Light is the default appearance; when `<html>` has `theme-dark`, the same names take their dark values. The site follows the system setting; on this site you can also switch at the bottom of the sidebar.
+
+### Grounds
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--bg` | `#ffffff` | `#121212` | The page |
+| `--surface` | `#ffffff` | `#1c1c1c` | Cards, dialogs and popups |
+| `--panel` | `#f5f5f5` | `#1c1c1c` | Grey panels, inputs, the action panel |
+| `--panel-hover` | `#ebebeb` | `#262626` | Panels on hover |
+| `--chip` | `#ededed` | `#262626` | Pills and count badges |
+| `--footer` | `#f5f5f5` | `#121212` | The footer |
+| `--overlay` | `#12121266` | `#000000a6` | The backdrop behind dialogs |
+
+### Text
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--text-strong` | `#121212` | `#f5f5f5` | Titles, film names, pressed states |
+| `--text` | `#1f1f1f` | `#eaeaea` | Body text |
+| `--text-2` | `#5a5a5a` | `#b5b5b5` | Descriptions and secondary facts |
+| `--text-3` | `#8a8a8a` | `#9b9b9b` | Placeholders, times, labels |
+| `--text-4` | `#b3b3b3` | `#666666` | The faintest hints |
+
+### Lines
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--line` | `#e6e6e6` | `#2a2a2a` | Dividers and card outlines |
+| `--line-strong` | `#d4d4d4` | `#3d3d3d` | Button outlines and dashed boxes |
+
+### Emphasis
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--accent` | `#e5391f` | `#e5391f` | Brand red: stars, the loading dot, histograms |
+| `--accent-text` | `#c42b16` | `#ff8a70` | Red text and links |
+| `--accent-soft` | `#e5391f1a` | `#e5391f24` | Pale red: pressed toggles, the error panel |
+| `--star` | `#e5391f` | `#e5391f` | Full stars |
+| `--star-empty` | `#d9d9d9` | `#454545` | Empty stars |
+| `--focus-ring` | `#e5391f66` | `#ff8a70aa` | The keyboard focus ring |
+| `--primary-bg` | `#121212` | `#f5f5f5` | Primary buttons, toasts, ticked checkboxes |
+| `--primary-text` | `#ffffff` | `#121212` | Text on primary buttons |
+
+## Usage
+
+- Red text is always `--accent-text`: `--accent`, #E5391F, reaches only 4.25:1 on white, short of the 4.5:1 body text needs; #C42B16 reaches 5.67:1.
+- Signal yellow is for warnings, such as a cancelled screening. It is not a second brand color.
+- A new color goes into `packages/ui/src/tokens.css` first, with a light and a dark value, and pages refer to it by name.

@@ -1,0 +1,17 @@
+---
+title: "Stars"
+group: "Controls"
+description: "Ratings in half stars, and StarRating, a rating input that works from the keyboard."
+---
+
+## Display
+
+Ratings are stored in half stars: `steps` runs from 1 to 10, so 7 is three and a half stars. Full stars are brand red and empty ones light grey; `size` is one of the five sizes (12 to 30px, the `--star-*` tokens), `sm` by default, the height of a meta line. A screen reader reads 3.5 stars.
+
+<Example name="components/stars/display" />
+
+## Rating
+
+`StarRating` is a radio group: the left half of each star is a half star and the right half a whole one, and the arrow keys move half a star at a time. The rating under a film page’s poster is this component, `xl` by default.
+
+<Example name="components/stars/rating" />

@@ -1,0 +1,17 @@
+---
+title: "Dialog"
+group: "Controls"
+description: "A modal dialog; on narrow screens the same dialog becomes a bottom sheet."
+---
+
+## Example
+
+On wide screens the dialog is centred and at most 560px wide. Below 768px the same dialog rises from the bottom of the screen as a sheet. While it is open the page behind stops scrolling and focus stays inside; Escape closes it and returns focus to the trigger. The close button in the corner comes with it.
+
+<Example name="components/dialog/basic" />
+
+## Usage
+
+- `title` is required: it is the dialog’s accessible name. Put explanations in `description`.
+- Make Cancel a `DialogClose`, so you do not manage `open` for it.
+- Pass `open` and `onOpenChange` to control it; when one button opens it, `trigger` is enough.

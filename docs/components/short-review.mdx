@@ -1,0 +1,19 @@
+---
+title: "ShortReview"
+group: "Film and community"
+description: "An audience review on an entry, with a spoiler shield, replies, withdrawal and reports."
+---
+
+## Example
+
+An audience review on an entry page. It adds four things to [ReviewCard](https://design.iff.day/components/review-card): a review marked as a spoiler stays covered and its text is requested from the API only when opened; Reply opens the replies and a reply box; the menu lets the author withdraw the review and anyone report it; long reviews show eight lines and then More.
+
+<Example name="components/short-review/basic" stage="fill">
+
+The second review is marked as a spoiler. Replies and reports show a toast and are not saved.
+
+</Example>
+
+## Usage
+
+`reload` is called after a reply or withdrawal succeeds, so the page reads its reviews again. `stars` is the author’s rating of the film, looked up by the page and passed in.

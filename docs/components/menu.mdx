@@ -1,0 +1,17 @@
+---
+title: "Menu"
+group: "Controls"
+description: "A menu of actions opened from a button, with group labels, separators and links."
+---
+
+## Example
+
+`Menu` opens 6px below its trigger and is at least 210px wide. Focus moves into the menu; the arrow keys move through it, typing jumps to a matching item, and Escape or a click outside closes it and returns focus to the button. Base UI handles all of this.
+
+<Example name="components/menu/basic" height={200} />
+
+## Usage
+
+- Pass the trigger as `trigger`; it keeps its own look. An icon-only trigger needs an `aria-label`.
+- For navigation use `MenuLinkItem` with the site’s `Link` in `render`; the menu closes itself after the click.
+- `MenuLabel` titles a group and `MenuSeparator` divides groups. Put actions with serious consequences, such as Withdraw and Report, in the last group.

@@ -1,0 +1,17 @@
+---
+title: "Tabs"
+group: "Controls"
+description: "In-page tabs, with a line under the selected one."
+---
+
+## Example
+
+`Tabs` draws the row of labels on a 1px hairline. The selected one covers its stretch with a 2px line in the text colour; the page decides what to show for each `value`. A count sits in the label as `(4)`, weight 400 and `--text-3`. On the selected tab it uses `--text-2`, as Articles and Lists do on a profile.
+
+<Example name="components/tabs/basic" stage="fill" />
+
+## Usage
+
+- When the tabs do not fit, the row scrolls sideways without wrapping, and the scrollbar stays hidden.
+- The arrow keys move between tabs; Base UI Tabs provides that.
+- Tabs that change the address are links: put `<a>` elements straight into `.tabs` and mark the current one with `aria-current="page"`. They look the same.

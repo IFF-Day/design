@@ -1,0 +1,15 @@
+---
+title: "ActionPanel"
+group: "Film and community"
+description: "The grey panel of actions beside a film page’s poster, one action per row."
+---
+
+## Example
+
+The grey panel beside a film page’s poster, one action per row, each row at least 44px tall for a finger. The hairline between rows starts after the icon. On hover the label is underlined; an `active` row is brand red, as Added to watchlist is.
+
+<Example name="components/action-panel/basic" />
+
+## Three kinds of row
+
+`ActionRow` becomes a different element by its props: with `to` a link on the site, with `href` an outside link that opens in a new window, and otherwise a button that calls `onClick`. `trailing` puts a small grey number or note at the end.

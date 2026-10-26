@@ -1,0 +1,23 @@
+---
+title: "Skeleton"
+group: "Controls"
+description: "Grey blocks the size of content still loading, so a page opens before its data."
+---
+
+## Example
+
+`Skeleton` is a grey block that pulses gently; give it the width and height of what it stands in for, or a class whose rule sets them (a poster’s `poster-art` keeps 2:3). `SkeletonText` draws lines as tall as the surrounding line height, the last one shorter. `SkeletonPage` wraps a page’s skeleton: it fades in over 0.2s, stays at least a window tall so the footer does not flash, and tells screen readers once that the page is loading.
+
+<Example name="components/skeleton/basic" stage="fill" />
+
+## Page skeletons
+
+A link opens its page at once: until the page’s data arrives, the route shows its skeleton (`pageRoute` in `apps/web/app/page-route.tsx`). The skeletons in `apps/web/src/skeletons.tsx` are built from each page’s own layout classes, so the columns and breakpoints are the page’s and nothing moves when the content lands. Film entries, films, people, screenings and festival pages have one; the festival directory shows a grid of card-sized blocks.
+
+<Example name="components/skeleton/directory" stage="fill" />
+
+## Usage
+
+- Use a skeleton where the layout is known before the data: a page’s frame, a grid of cards. Inside a loaded page, a small area that reloads keeps `Loading`.
+- Match the real content’s size. A block that is taller or shorter than what replaces it makes the page jump.
+- With reduced motion set in the system, skeletons neither pulse nor fade in.

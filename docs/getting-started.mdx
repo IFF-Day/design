@@ -1,0 +1,62 @@
+---
+title: "Getting started"
+group: "Start"
+description: "Where the components live, how a page uses them and which rules the tests enforce."
+---
+
+## Where things live
+
+| Path | What it holds |
+| --- | --- |
+| `packages/ui/src` | `@iffday/ui`: every interactive control, built on Base UI, with the tokens in `tokens.css` and their styles in `styles.css` |
+| `apps/web/src/kit.tsx` | Page blocks: posters, film tiles, shelves, section headers, stats, the action panel, histograms |
+| `apps/web/src/review-card.tsx` | Reviews, short reviews and the Like button |
+| `apps/web/src/components.tsx` | Programme cards, the score summary, the rating input and the spoiler shield |
+| `apps/web/src/film-media.tsx` | Film banners, poster choice and the poster gallery |
+| `apps/web/src/design.css` | The design layer: it imports the partials in `styles/` and loads after the older `styles.css` |
+
+## On a page
+
+A page in `apps/web/src/pages/` imports controls from `@iffday/ui` and blocks from the files above, and takes every string from a message key. This site writes the same imports as `@iffday/web/src/kit`, the package path of `../kit`.
+
+```tsx
+import { useT } from '@iffday/i18n';
+import { Button } from '@iffday/ui';
+import { FilmTile, SectionHeader, Shelf } from '../kit';
+import type { Entry } from '../types';
+
+export function Wanted({ films }: { films: Entry[] }) {
+  const t = useT();
+  return (
+    <section className="page-section">
+      <SectionHeader title={t('film.entry.watchlist')} count={films.length} />
+      <Shelf>
+        {films.map((film) => (
+          <FilmTile key={film.id} entry={film} to={film.canonicalPath!} subtitle={film.director} />
+        ))}
+      </Shelf>
+    </section>
+  );
+}
+```
+
+## Rules with tests
+
+- Web code renders no native `<button>`, `<input>`, `<select>`, `<form>` or other interactive element, and never imports `@base-ui` directly: `tests/ui-boundary.test.ts` checks every file in `apps/web/src`.
+- Every message key in `en.json` is used somewhere, English text contains no Chinese, no middle dot and no em dash, and published translations are complete: `tests/translation-catalog.test.ts`.
+- Stylesheets write type, weight, motion and brand colours as tokens: a font size in px, a numeric weight, a raw curve, a duration under a second or a hex value that a brand token already names fails `tests/design-tokens.test.ts`, and so does an inline `fontSize` or `fontWeight`.
+- Components take sizes and variants as props (`size="sm"`, `variant="primary"`), never as numbers or class names; see [Sizes](https://design.iff.day/sizes) and [Button](https://design.iff.day/components/button).
+- `Link`, `NavLink` and `useLocation` come from `apps/web/src/router.tsx`, never from `react-router`, so links keep the reader’s language segment.
+- A new page’s styles go in a partial under `apps/web/src/styles/`, imported from `design.css`.
+
+## About this site
+
+Every example here is the real component, imported from the repository and rendered with the Web app’s own providers and stylesheets, in English. Props tables, the files that use each component and the icon list are read from the source when the site is built, so they change when the code does. The films are twelve BIFF 2026 entries read from iff.day with their posters; the people and reviews are made up. A stand-in API in the page answers likes, marks, replies and reports for a signed-in sample reader and forgets them on reload.
+
+The site lives in `apps/design`. A page is an entry in `app/pages.ts`, a body in `app/docs/` and examples in `app/examples/` under the page’s path; the code shown under an example is its file.
+
+```sh
+pnpm --filter @iffday/design dev      # http://127.0.0.1:5291
+pnpm --filter @iffday/design build    # prerenders every page into apps/design/build/client
+pnpm --filter @iffday/design samples  # refreshes the sample films from iff.day
+```

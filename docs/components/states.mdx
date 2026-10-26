@@ -1,0 +1,17 @@
+---
+title: "States"
+group: "Controls"
+description: "Placeholders for loading, empty and failed content."
+---
+
+## Example
+
+From the top: `Loading` is a blinking red dot with Loading…; `Empty` is a dashed box that says why the place is empty and what the reader can do; `ErrorState` is pale red with the reason, plus a Retry button when `retry` is passed.
+
+<Example name="components/states/basic" stage="fill" />
+
+## Usage
+
+- The `error` of `ErrorState` can be a message key, translated for the reader, or text that is already translated.
+- An empty state’s title states the fact (This list has no films yet); the description gives the next step, with one button at most.
+- With reduced motion set in the system, the loading dot does not blink.

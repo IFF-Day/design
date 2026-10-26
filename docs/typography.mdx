@@ -1,0 +1,56 @@
+---
+title: "Typography"
+group: "Foundations"
+description: "Archivo, a variable sans, and DM Mono; Chinese text uses the system fonts."
+---
+
+## Typefaces
+
+Latin text is set in Archivo, a sans serif that varies in width from 62 to 125 and in weight from 100 to 900. Numbers and codes use DM Mono. Both are licensed under the SIL OFL and served from `apps/web/public/fonts/`, Latin characters only. Chinese text loads no web font and falls back through the system fonts: PingFang SC, Hiragino Sans GB, Noto Sans CJK SC and Microsoft YaHei.
+
+- Aa **Archivo** `--font-sans`
+- Aa **DM Mono** `--font-mono`
+
+## Weights
+
+Five weights, each a token. Regular is for text and medium for titles and emphasis, the default heading weight; semibold and bold are for the few figures that need more; black is only for display titles and festival wordmarks. Stylesheets write `var(--font-weight-…)`, never a number.
+
+- International film festivals `--font-weight-regular, 400`
+- International film festivals `--font-weight-medium, 500`
+- International film festivals `--font-weight-semibold, 600`
+- International film festivals `--font-weight-bold, 700`
+- International film festivals `--font-weight-black, 900`
+
+## Widths
+
+`font-stretch` runs from 62% to 125%. The site uses only the default 100% so far; the narrow widths would suit long titles on posters and banners.
+
+- The Handmaiden `62%`
+- The Handmaiden `75%`
+- The Handmaiden `100%`
+- The Handmaiden `112%`
+- The Handmaiden `125%`
+
+## Sizes
+
+Sizes are named by what the text is, from micro labels to display titles. The base size is body, 15px with a line height of 1.5. Stylesheets write `var(--font-size-…)` and never a size in px; `em` and `%` stay for sizes relative to the surrounding text, such as a superscript. Headings are medium with letter spacing tightened by 1%, so size alone sets their rank.
+
+- **micro** `--font-size-micro, 10px` Stat labels, labels set on posters Watchlist, 12 people
+- **fine** `--font-size-fine, 11px` Counts, term labels, captions under images Director, 248 films
+- **caption** `--font-size-caption, 12px` Kickers, meta lines, pills, the footer 5 hours ago, 12 likes
+- **label** `--font-size-label, 13px` Tags, dates, small buttons, secondary links LEE Chang-dong, 2026, 164 min
+- **control** `--font-size-control, 14px` Buttons, inputs, menus, card titles Add to plan
+- **body** `--font-size-body, 15px` Running text Walked along Haeundae for an hour after the screening.
+- **lead** `--font-size-lead, 16px` Synopses, biographies, festival names on cards A lighthouse keeper and his daughter wait out the winter.
+- **subheading** `--font-size-subheading, 18px` Stat values, small section heads Latest articles and reviews
+- **heading** `--font-size-heading, 20px` Section heads Screenings
+- **heading-lg** `--font-size-heading-lg, 24px` Alternate titles, calendar days Mogeun bang
+- **title-sm** `--font-size-title-sm, 28px` Page titles on phones Possible Love
+- **title** `--font-size-title, 35px` Page titles Possible Love
+- **display** `--font-size-display, clamp(32px, 5vw, 50px)` Display titles Festival directory
+
+## Usage
+
+- Small interface text is never set in capitals or small caps. Rank comes from size, weight and color.
+- Archivo’s `@font-face` covers Latin characters only. Where Chinese falls back to a system font the weights differ, so check mixed-script titles in both languages.
+- Numbers compared side by side take `font-variant-numeric: tabular-nums`, as Stats and count badges do.

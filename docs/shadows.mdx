@@ -1,0 +1,19 @@
+---
+title: "Shadows"
+group: "Foundations"
+description: "Two shadows, for cards and for popups; in dark mode an outline draws the edge."
+---
+
+## Two shadows
+
+The site separates layers mostly with grounds and dividers, so there are only two shadows. A drop shadow barely shows in dark mode, so the dark popup shadow adds a 1px `#3D3D3D` outline that draws the edge.
+
+- **Popup** `--shadow-pop` Menus, selects, dialogs and toasts: only what floats above the page.
+- **Card** `--shadow-card` A 1px inner outline with a touch of drop shadow: the toggles under a poster, the selected segment.
+
+## Values
+
+| Token | Light | Dark |
+| --- | --- | --- |
+| `--shadow-pop` | `0 10px 32px #1212121f, 0 2px 6px #12121214` | `0 10px 32px #00000080, 0 0 0 1px #3d3d3d` |
+| `--shadow-card` | `inset 0 0 0 1px #13131419, 0 4px 4px -5px #00000029` | `inset 0 0 0 1px #ffffff14, 0 4px 4px -5px #00000066` |

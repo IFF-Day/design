@@ -1,0 +1,15 @@
+---
+title: "RatingHistogram"
+group: "Film and community"
+description: "Ratings in ten half-star bins, with the mean and the count."
+---
+
+## Example
+
+Ten bars run from half a star to five stars. The tallest fills 46px and the rest follow the counts; any bin with a rating keeps at least 6% height, so it never reads as zero. Hovering a bar shows 4 stars, 62 people. The mean and the count sit at the top.
+
+<Example name="components/rating-histogram/basic" />
+
+## Usage
+
+`distribution` has exactly ten numbers, the first for half a star. For an entry’s complete rating section use [ScoreSummary](https://design.iff.day/components/score-summary).

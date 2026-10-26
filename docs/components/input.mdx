@@ -1,0 +1,17 @@
+---
+title: "Input"
+group: "Controls"
+description: "Single-line inputs and Textarea, validated together by Field and Form."
+---
+
+## Example
+
+An input is a light grey rounded box without an outline, 38px tall, the same as the `Select` trigger. `Textarea` is the same Base UI Input rendered as a multi-line box, so `Field` and `Form` validate it too.
+
+<Example name="components/input/basic" />
+
+## Usage
+
+- An input on its own needs an `aria-label`; inside a `Field`, the field’s label names it.
+- The placeholder is a light grey hint that disappears on typing, so it never replaces a label.
+- Web code never writes a native `<input>` or `<textarea>`; the tests stop it.

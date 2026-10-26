@@ -1,0 +1,21 @@
+---
+title: "CombinedScore"
+group: "Film and community"
+description: "A film’s overall score out of 10: IFFDAY’s share against the other platforms, each with its own rating."
+---
+
+## Example
+
+The overall score out of 10 sits at the top, with how much of it comes from IFFDAY. Below it, one row per source: IFFDAY with its number of raters, then each platform in its own scale (stars out of 5, a score out of 10 or 100, a Tomatometer percentage) with its count and its share of the score. A platform with too few ratings is listed in grey as not counted.
+
+<Example name="components/combined-score/basic" />
+
+## Without IFFDAY ratings
+
+A festival premiere with no IFFDAY ratings yet still shows the score the other platforms give, and says so. Under five IFFDAY raters the line says how many there are.
+
+<Example name="components/combined-score/external-only" />
+
+## Usage
+
+Pass `combined` from `GET /films/:id/rating`. Film pages and festival entry pages put it in the sidebar above the [RatingHistogram](https://design.iff.day/components/rating-histogram); entry pages title that one This edition, since an entry’s own score only counts IFFDAY ratings given there.

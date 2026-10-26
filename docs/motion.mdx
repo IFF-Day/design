@@ -1,0 +1,30 @@
+---
+title: "Motion"
+group: "Foundations"
+description: "Three curves and four durations that every transition and animation shares."
+---
+
+## Curves
+
+Three curves, each a token in `tokens.css`. Every `transition` and `animation` names one; a transition that named none used to fall back to the browser’s `ease`. Hover a row to watch the dot travel on that curve.
+
+- **standard** `cubic-bezier(0.4, 0, 0.2, 1)` Moving between two states: hover, colour, size, a tab’s underline
+- **out** `cubic-bezier(0.22, 1, 0.36, 1)` Bringing something in or letting it settle: popups, toasts, a press released
+- **spring** `cubic-bezier(0.175, 0.885, 0.32, 1.275)` A small mark that pops in with a slight overshoot: the tick on a toast
+
+## Durations
+
+Four durations. Loops and long decorative entrances, such as a skeleton’s pulse or a header photo fading in, keep their own length, a second or more.
+
+| Token | Length | Used for |
+| --- | --- | --- |
+| `--duration-fast` | 150ms | Hover and colour changes |
+| `--duration-base` | 200ms | Menus, toggles and the press of a button |
+| `--duration-slow` | 300ms | Panels, dialogs and collapsibles |
+| `--duration-slower` | 400ms | A toast leaving |
+
+## Usage
+
+- Write `transition: opacity var(--duration-fast) var(--ease-standard)`; a delay after the duration may stay a plain time. `tests/design-tokens.test.ts` fails on a raw curve or a duration under a second.
+- Buttons, toggles and checkboxes share one press: they scale to `--press-scale` over `--press-duration` on `--press-ease`.
+- With reduced motion set in the system, the press, skeletons and the loading dot stand still.

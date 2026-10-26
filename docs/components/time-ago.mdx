@@ -1,0 +1,15 @@
+---
+title: "TimeAgo"
+group: "Film and community"
+description: "Relative times like 3 days ago, with the UTC time to the minute on hover."
+---
+
+## Example
+
+The browser’s `Intl.RelativeTimeFormat` writes the time in the reader’s language. Under a minute it counts seconds, then minutes, hours, days, weeks, months and years. It renders a `<time>` element whose hover text is the UTC time to the minute.
+
+<Example name="components/time-ago/basic" />
+
+## Usage
+
+Pass an ISO time string. The server and the browser render at slightly different moments, so the words can differ; the component turns off the hydration warning for this element.

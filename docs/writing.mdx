@@ -1,0 +1,30 @@
+---
+title: "Writing"
+group: "Foundations"
+description: "Punctuation, capitalisation and place names in interface text."
+---
+
+## Punctuation
+
+- Interface text never uses the middle dot or the em dash, in any language. Join related items with a comma and separate facts with a full stop, taking both from `separators(locale)` in `@iffday/i18n`: a full-width comma and full stop in Chinese, a comma and full stop with a space in English.
+- Ranges of dates, times and numbers keep the en dash: `10:30–12:44`, `2019–2024`.
+- The line under a programme card joins the director, the year and the running time with `separators(locale).comma`, so each language gets its own comma.
+
+## Capitals
+
+Small interface text is never forced into capitals, with neither `text-transform: uppercase` nor small caps. Labels, buttons and headings are written in sentence case, and their rank comes from size and weight.
+
+## Messages
+
+- Code holds semantic message keys, as the Steam client does: `t('film.entry.addToWatchlist')`. `packages/i18n/src/en.json` is the complete English source, and `zh-Hans.json`, `zh-Hant.json` and `zh-Hant-HK.json` translate it with the same keys.
+- Keys are dotted lowerCamel names whose first part is the area of the site, such as `common.cancel` or `account.settings.bio`. Changing the wording keeps the key; the same English in a different context gets its own key.
+- Each translation records a hash of the English it was made from. After checking a translation, run `pnpm i18n accept zh-Hans <key>`; a test fails while a translation is older than its English.
+- Traditional Chinese is translated from English, never converted from Simplified Chinese.
+
+## Places
+
+Taiwan, Hong Kong and Macao are named plainly, in every language and in data as well as interface text. Never write Taiwan, China; Taiwan, Province of China; Hong Kong SAR China; Hong Kong, China; Macao, China; or any equivalent. Festival catalogues, Wikidata and `Intl.DisplayNames` all produce some of these, so names are corrected when data is imported and in the country name overrides.
+
+## Editions
+
+An edition has a name only when it has a proper one of its own. An ordinary edition is labelled from the festival, the year and its number, built for the reader’s language. The year-sequence code in an address, such as `2026-2`, is never shown as a label.

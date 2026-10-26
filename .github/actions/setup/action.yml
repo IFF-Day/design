@@ -1,0 +1,75 @@
+name: Set up the private commit
+description: Opens a check run on the private commit, checks it out into app/ and installs its dependencies.
+inputs:
+  check:
+    description: Name of the check run on the commit
+    required: true
+  client-id:
+    required: true
+  private-key:
+    required: true
+outputs:
+  token:
+    description: A token of the iffday app
+    value: ${{ steps.app.outputs.token }}
+  check-run:
+    description: ID of the check run
+    value: ${{ steps.check.outputs.id }}
+runs:
+  using: composite
+  steps:
+    # Read from the event file and masked, so no log shows the commit.
+    - name: Read the commit
+      shell: bash
+      run: |
+        sha=$(jq -r .inputs.sha "$GITHUB_EVENT_PATH")
+        echo "::add-mask::$sha"
+        echo "SHA=$sha" >> "$GITHUB_ENV"
+    - id: app
+      uses: actions/create-github-app-token@v3
+      with:
+        client-id: ${{ inputs.client-id }}
+        private-key: ${{ inputs.private-key }}
+        owner: IFF-Day
+        permission-checks: write
+        permission-contents: read
+    - id: check
+      shell: bash
+      env:
+        GH_TOKEN: ${{ steps.app.outputs.token }}
+        NAME: ${{ inputs.check }}
+      run: |
+        cp "$GITHUB_ACTION_PATH/../../quiet" /tmp/quiet
+        : > /tmp/job.log
+        id=$(gh api "repos/$SOURCE/check-runs" -f name="$NAME" -f head_sha="$SHA" \
+          -f status=in_progress -f details_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .id)
+        echo "id=$id" >> "$GITHUB_OUTPUT"
+    # Fetched by hand: actions/checkout prints the commit's subject.
+    - name: Check out the commit
+      shell: bash /tmp/quiet {0}
+      env:
+        TOKEN: ${{ steps.app.outputs.token }}
+      run: |
+        git init -q app
+        auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+        git -C app -c http.extraHeader="Authorization: basic $auth" fetch -q --depth=1 "https://github.com/$SOURCE.git" "$SHA"
+        git -C app checkout -q FETCH_HEAD
+    - name: Check the commit has its CI tasks
+      shell: bash
+      run: |
+        if [ ! -f app/scripts/ci.sh ]; then
+          echo "This commit has no scripts/ci.sh; merge main into it." | tee -a /tmp/job.log
+          exit 1
+        fi
+    - uses: pnpm/action-setup@v6
+      with:
+        package_json_file: app/package.json
+    - uses: actions/setup-node@v7
+      with:
+        node-version: 24
+        cache: pnpm
+        cache-dependency-path: app/pnpm-lock.yaml
+    - name: Install dependencies
+      shell: bash /tmp/quiet {0}
+      working-directory: app
+      run: pnpm install --frozen-lockfile

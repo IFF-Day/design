@@ -1,0 +1,19 @@
+---
+title: "FilmTile"
+group: "Film and community"
+description: "A poster with a title and a second line, with an optional rank and badge."
+---
+
+## Example
+
+Under the poster comes one line of title, a 13px grey second line and an optional `meta` row. The title keeps to one line and ends in an ellipsis when it is too long; on hover it is underlined and the poster fades a little. `rank` puts a position above the title, as rankings do.
+
+<Example name="components/film-tile/grid" stage="fill" />
+
+## In a grid
+
+Put tiles in `.tile-grid`: by default each column is at least 150px and the row fills up; `cols-5` and `cols-6` fix the count. At 1020px and narrower the grid has four columns, and three on phones. For a single row use [Shelf](https://design.iff.day/components/shelf).
+
+## Accessibility
+
+The poster and the title link to the same address. The poster link is hidden from screen readers and skipped by Tab, so each film is read once and takes one Tab stop.

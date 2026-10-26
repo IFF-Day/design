@@ -1,0 +1,12 @@
+{
+  // The iffday-ci-relay Worker: receives the iffday GitHub App's
+  // webhooks and starts .github/workflows/ci.yml. Secrets: APP_ID,
+  // APP_PRIVATE_KEY (PKCS#8 PEM), WEBHOOK_SECRET and SOURCE_REPOSITORY.
+  // Deploy with CLOUDFLARE_ACCOUNT_ID set.
+  "name": "iffday-ci-relay",
+  "main": "index.ts",
+  "compatibility_date": "2026-10-12",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+}

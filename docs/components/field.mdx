@@ -1,0 +1,17 @@
+---
+title: "Field"
+group: "Controls"
+description: "A label, a control and a hint make a field; Fieldset and Form group fields into a form."
+---
+
+## Field
+
+`Field` stacks a label, a control and a hint: the label is 13px and medium weight, the hint is secondary text. Base UI ties the label to the control, so a screen reader reads the label as the control’s name.
+
+<Example name="components/field/basic" />
+
+## Form
+
+`Form` checks constraints such as `required` and `pattern` before it submits, and the browser points at the field that fails. Group related fields in a `Fieldset` named by a `Legend`. After a save, tell the reader with a toast: Save in the example below shows Saved.
+
+<Example name="components/field/form" stage="start" />

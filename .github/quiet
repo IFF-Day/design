@@ -1,0 +1,15 @@
+#!/bin/bash
+# The shell for steps that run the private repository's commands. Their output stays
+# out of this public log: it goes to /tmp/job.log, which the report action
+# sends to the commit's check run in that repository.
+{
+  echo
+  sed 's/^/$ /' "$1"
+} >> /tmp/job.log
+if bash -e -o pipefail "$1" >> /tmp/job.log 2>&1; then
+  echo "Passed."
+else
+  code=$?
+  echo "Failed with exit code $code. The output is on the commit's check run in the private repository."
+  exit "$code"
+fi

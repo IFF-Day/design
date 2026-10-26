@@ -1,0 +1,17 @@
+---
+title: "ToggleButton"
+group: "Controls"
+description: "A button with a pressed and an unpressed state, for marks like Watchlist and Like."
+---
+
+## Example
+
+`ToggleButton` only handles pressed and unpressed: pressed, it carries `data-pressed` and a screen reader announces it as pressed. className decides the look. The Watched, Watchlist and Add to plan buttons under a film page’s poster use `release-toggle`: pressed, the text turns brand red on a 10% red ground.
+
+<Example name="components/toggle-button/basic" />
+
+## Usage
+
+- Change the words with the state (Watchlist, On watchlist), so color is not the only signal.
+- For a toggle that needs a signed-in reader, check the session in `onPressedChange` before switching.
+- The Like button is one too: see `LikeButton` on [ReviewCard](https://design.iff.day/components/review-card).

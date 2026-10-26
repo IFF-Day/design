@@ -1,0 +1,40 @@
+name: Report to the private commit
+description: Completes the job's check run on the commit, with the output of its steps.
+inputs:
+  token:
+    required: true
+  check-run:
+    required: true
+  status:
+    description: job.status
+    required: true
+runs:
+  using: composite
+  steps:
+    - if: inputs.check-run != ''
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        ID: ${{ inputs.check-run }}
+        STATUS: ${{ inputs.status }}
+      run: |
+        python3 - > /tmp/report.json <<'EOF'
+        import json, os, re
+        log = open('/tmp/job.log', errors='replace').read()
+        log = re.sub(r'\x1b\[[0-9;?]*[A-Za-z]', '', log).strip()
+        status = os.environ['STATUS']
+        conclusion = status if status in ('success', 'failure', 'cancelled') else 'failure'
+        title = {'success': 'Passed', 'failure': 'Failed', 'cancelled': 'Cancelled'}[conclusion]
+        cut = len(log) > 60000
+        text = log[-60000:]
+        print(json.dumps({
+            'status': 'completed',
+            'conclusion': conclusion,
+            'output': {
+                'title': title,
+                'summary': 'The last 60,000 characters of the output.' if cut else 'The whole output.',
+                'text': '```\n' + text.replace('```', "'''") + '\n```',
+            },
+        }))
+        EOF
+        gh api -X PATCH "repos/$SOURCE/check-runs/$ID" --input /tmp/report.json > /dev/null

@@ -1,0 +1,19 @@
+---
+title: "NavigationDrawer"
+group: "Controls"
+description: "The phone navigation sheet that rises from the bottom and closes itself at 768px."
+---
+
+## Example
+
+On phones the site keeps its main navigation in this sheet. It rises from the bottom, takes at most 86% of the screen height and dims the page. It is a Base UI Dialog, so focus, Escape, a tap on the backdrop and the scroll lock behave as in a dialog. Once the window reaches 768px the sheet closes, because the header then has room for the navigation.
+
+<Example name="components/navigation-drawer/basic">
+
+Open it in a narrow window, or open it and widen the window to watch it close. This site’s menu on phones is the same component.
+
+</Example>
+
+## Usage
+
+`NavigationDrawer` wraps the trigger and the sheet. `NavigationDrawerPopup` brings a hidden Navigation title and a close button. After a link in the sheet is followed, set `open` back to `false`.

@@ -1,0 +1,36 @@
+---
+title: "Button"
+group: "Controls"
+description: "Four looks, two sizes, a pill shape and the round icon-button."
+---
+
+## Variants
+
+`Button` wraps Base UI’s button and takes its look from props, never from class names. `variant` is `secondary` by default: white with an outline. `primary` is the one main action on a page, black with white text, reversed in dark mode. `soft` is grey and suits toolbars. `ghost` stays transparent until hovered, for Cancel and other secondary actions. `accent` is the brand red and rare. `link` is underlined text. `plain` drops the button styling for controls that draw themselves, such as segmented controls and stickers.
+
+<Example name="components/button/variants" />
+
+## Sizes and shape
+
+`size` is one of `xs`, `sm`, `base`, `lg` and `xl`; the heights come from the `--control-*` tokens (26 to 52px) and the text from the type tokens. `sm` is the one most used: buttons in list rows, cards and sidebars. `shape="pill"` rounds the ends fully, for follow and filter chips; `block` fills the width.
+
+<Example name="components/button/sizes" />
+
+## Icon only
+
+`IconButton` is a round button holding only an `Icon`, in the secondary text grey; it takes the same five sizes, and `active` turns it brand red, as the Watchlist heart does. An icon-only button always needs an `aria-label`. A text button can carry an icon too: put it before the text, and the button leaves 7px between them.
+
+<Example name="components/button/icon" />
+
+## States
+
+A toggle shows its state with its variant (`primary` when on) and `aria-pressed`. A button that is saving gets `disabled` and `aria-busy`: disabled buttons drop to 45% opacity, and a busy one shows the progress cursor.
+
+<Example name="components/button/states" />
+
+## Usage
+
+- `Button` defaults to `type="submit"`. Outside a form, or for any button that does not submit, write `type="button"`. `IconButton` defaults to `type="button"`.
+- Web code never writes a native `<button>`: `tests/ui-boundary.test.ts` fails on one.
+- Navigation is a link, never a button. A link drawn as a button is `ButtonLink` (or `IconButtonLink`) from `apps/web/src/router.tsx`, with the same props; `to` is a page on this site and `href` any other address.
+- Anything else that acts as a button, such as a Base UI trigger, spreads `buttonStyle()` or `iconButtonStyle()`.

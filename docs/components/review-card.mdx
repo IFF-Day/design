@@ -1,0 +1,23 @@
+---
+title: "ReviewCard"
+group: "Film and community"
+description: "The layout of one review: avatar, byline, stars, text and actions."
+---
+
+## Example
+
+The layout of one review: a 34px avatar on the left; on the right the byline and time, then the film, the stars, the text and the actions. With `poster` a 72px poster column appears on the far right, 56px on phones. Reviews, articles and the community page all use this layout.
+
+<Example name="components/review-card/basic" stage="fill">
+
+Try Like: the count changes first, then the API confirms it. The API here is a stand-in, so a reload resets it.
+
+</Example>
+
+## Like
+
+With `like` the card shows `LikeButton`. A click adds one to the count at once; when the API answers, its count wins, and on failure the count goes back and an error toast appears. Readers who are not signed in are taken to sign in. It also works on its own: reviews, articles and lists can all be liked.
+
+## Byline
+
+`byline` replaces the default Review by; articles use Article by. `AuthorName` links the name to `/@handle` when there is a handle and shows the plain name otherwise.

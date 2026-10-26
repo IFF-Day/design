@@ -1,0 +1,313 @@
+name: CI
+# Runs CI for the private repository behind iff.day, whose name is the secret
+# SOURCE_REPOSITORY. The relay in relay/ starts a run for every push to its
+# main and release branches and every pull request. Each job checks out the
+# commit, runs one task of that repository's scripts/ci.sh and reports to the
+# commit as a check run with the full output. These logs only say which step
+# passed or failed; the commit, the repository and the IDs show as ***.
+#
+# A main commit that passes is deployed to staging and rebuilds design.iff.day
+# and docs/ here; a release commit is deployed to production. The deploy
+# secrets sit in the environments staging, production and design, which only
+# this repository's main branch can use.
+run-name: CI
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Commit of the private repository
+        required: true
+      target:
+        description: What the commit is
+        required: true
+        type: choice
+        options: [main, release, pr]
+      pr:
+        description: Pull request number, for pr
+        default: ''
+      deploy:
+        description: Deploy the commit once it passes
+        type: boolean
+        default: true
+      dry_run:
+        description: Build and list pending migrations, but change nothing
+        type: boolean
+        default: false
+      allow_destructive_migrations:
+        description: Apply production migrations that drop tables, columns or constraints or change column types (rehearse them on a copy of production first)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+# A new push to a pull request cancels the run before it. Runs for main and
+# release each have a group of their own, so no deploy is cut short.
+concurrency:
+  group: ${{ inputs.target == 'pr' && format('pr-{0}', inputs.pr) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ inputs.target == 'pr' }}
+env:
+  SOURCE: ${{ secrets.SOURCE_REPOSITORY }}
+  NO_COLOR: '1'
+jobs:
+  # A release commit that already passed (on main or in its pull request) goes
+  # to production without being checked again.
+  gate:
+    if: inputs.target == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      verified: ${{ steps.passed.outputs.verified }}
+    steps:
+      # Read from the event file and masked, so no log shows the commit.
+      - name: Read the commit
+        run: |
+          sha=$(jq -r .inputs.sha "$GITHUB_EVENT_PATH")
+          echo "::add-mask::$sha"
+          echo "SHA=$sha" >> "$GITHUB_ENV"
+      - id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: IFF-Day
+          permission-checks: read
+      - id: passed
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          count=$(gh api "repos/$SOURCE/commits/$SHA/check-runs?check_name=CI&status=completed" \
+            --jq '[.check_runs[] | select(.conclusion == "success")] | length')
+          if [ "${count:-0}" -gt 0 ]; then verified=true; else verified=false; fi
+          echo "verified=$verified" >> "$GITHUB_OUTPUT"
+          echo "Passed before: $verified" >> "$GITHUB_STEP_SUMMARY"
+
+  checks:
+    needs: gate
+    if: ${{ !cancelled() && needs.gate.result != 'failure' && needs.gate.outputs.verified != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          sparse-checkout: .github
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: checks
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - run: bash scripts/ci.sh checks
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}
+
+  test:
+    needs: gate
+    if: ${{ !cancelled() && needs.gate.result != 'failure' && needs.gate.outputs.verified != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        shard: [1, 2, 3, 4]
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          sparse-checkout: .github
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: test ${{ matrix.shard }}/4
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - run: bash scripts/ci.sh test ${{ matrix.shard }}/4
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}
+
+  # The commit's overall result, which the release gate looks for.
+  result:
+    needs: [gate, checks, test]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      passed: ${{ steps.verdict.outputs.passed }}
+    steps:
+      - name: Read the commit
+        run: |
+          sha=$(jq -r .inputs.sha "$GITHUB_EVENT_PATH")
+          echo "::add-mask::$sha"
+          echo "SHA=$sha" >> "$GITHUB_ENV"
+      - id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: IFF-Day
+          permission-checks: write
+      - id: verdict
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          VERIFIED: ${{ needs.gate.outputs.verified }}
+          CHECKS: ${{ needs.checks.result }}
+          TEST: ${{ needs.test.result }}
+        run: |
+          if [ "$VERIFIED" = true ] || { [ "$CHECKS" = success ] && [ "$TEST" = success ]; }; then
+            conclusion=success
+          elif [ "$CHECKS" = cancelled ] || [ "$TEST" = cancelled ]; then
+            conclusion=cancelled
+          else
+            conclusion=failure
+          fi
+          [ "$conclusion" = success ] && passed=true || passed=false
+          echo "passed=$passed" >> "$GITHUB_OUTPUT"
+          gh api "repos/$SOURCE/check-runs" -f name=CI -f head_sha="$SHA" -f status=completed \
+            -f conclusion="$conclusion" -f details_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -f "output[title]=checks $CHECKS, tests $TEST" -f "output[summary]=Passed before: ${VERIFIED:-false}" > /dev/null
+
+  # design.iff.day, built from the commit, and its pages as MDX in docs/.
+  design:
+    needs: result
+    # Spelled out: the skipped gate would otherwise skip this job too.
+    if: ${{ !cancelled() && inputs.target == 'main' && inputs.deploy && needs.result.outputs.passed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    environment: design
+    concurrency:
+      group: design
+      cancel-in-progress: true
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: design.iff.day
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bash scripts/ci.sh design "$RUNNER_TEMP/docs"
+      - name: Update docs/
+        shell: bash
+        working-directory: ci
+        run: |
+          rm -rf docs
+          cp -R "$RUNNER_TEMP/docs" docs
+          git add -A docs
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name='github-actions[bot]' -c user.email='41898283+github-actions[bot]@users.noreply.github.com' \
+            commit -q -m "Update the pages"
+          git push -q origin HEAD:main
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}
+
+  # A main commit goes to staging: pending migrations on the staging database,
+  # destructive ones included, then its Workers. The task leaves a commit main
+  # has moved past with code changes to the newer commit's run.
+  staging:
+    needs: result
+    if: ${{ !cancelled() && inputs.target == 'main' && inputs.deploy && needs.result.outputs.passed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    concurrency:
+      group: staging
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          sparse-checkout: .github
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: deploy staging${{ inputs.dry_run && ' (dry run)' || '' }}
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - env:
+          GH_TOKEN: ${{ steps.setup.outputs.token }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: bash scripts/ci.sh deploy staging
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}
+
+  # A release commit goes to production: pending migrations (destructive ones
+  # only when the run allows them), its Workers, then the live checks.
+  production:
+    needs: result
+    if: ${{ !cancelled() && inputs.target == 'release' && inputs.deploy && needs.result.outputs.passed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          sparse-checkout: .github
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: deploy production${{ inputs.dry_run && ' (dry run)' || '' }}
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - env:
+          GH_TOKEN: ${{ steps.setup.outputs.token }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          ALLOW_DESTRUCTIVE_MIGRATIONS: ${{ inputs.allow_destructive_migrations }}
+        run: bash scripts/ci.sh deploy production
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}

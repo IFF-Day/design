@@ -1,0 +1,17 @@
+---
+title: "Select"
+group: "Controls"
+description: "A dropdown whose options are SelectOption children; no native select is rendered."
+---
+
+## Example
+
+Options are `SelectOption` children. `Select` reads their values and labels and hands them to Base UI, so the page has no native `<select>`. The list opens 5px below the trigger instead of covering it; the selected option has a check, and disabled ones are faded.
+
+<Example name="components/select/basic" height={180} />
+
+## Usage
+
+- Values are strings. Numbers work too, but `onValueChange` receives a string; convert it back where needed.
+- An empty string can stand for All or None: the poster language filter and No rating both do this.
+- With a handful of options that readers should see at once, consider `Tabs` or a row of buttons.
