@@ -14,4 +14,5 @@ description: 'A menu of actions opened from a button, with group labels, separat
 
 - Pass the trigger as `trigger`; it keeps its own look. An icon-only trigger needs an `aria-label`.
 - For navigation use `MenuLinkItem` with the site’s `Link` in `render`; the menu closes itself after the click.
+- For a one-of choice, such as a sort order, put `MenuRadioItem`s in a `MenuRadioGroup` with `value` and `onValueChange`; the chosen item is ticked and the menu closes on a choice.
 - `MenuLabel` titles a group and `MenuSeparator` divides groups. Put actions with serious consequences, such as Withdraw and Report, in the last group.

@@ -16,6 +16,7 @@ Marks here live in this page only and are gone after a reload.
 
 ## Usage
 
+- `size="sm"` is for a card set narrower than the grid, as in a row of posters: the poster's fallback title and the card's title step down. The row sets the width.
 - It reads the reader’s marks from `useApp()`, so it only works inside `AppProvider`, as every page on the site is.
 - The link is the entry’s `canonicalPath`; without one it is built from the festival, edition and title, and as a last resort from the public number.
 - The heart is disabled with `aria-busy` until the marks have loaded.
