@@ -25,14 +25,15 @@ runs:
         status = os.environ['STATUS']
         conclusion = status if status in ('success', 'failure', 'cancelled') else 'failure'
         title = {'success': 'Passed', 'failure': 'Failed', 'cancelled': 'Cancelled'}[conclusion]
+        # Long outputs keep their start (setup, migrations) and their end.
         cut = len(log) > 60000
-        text = log[-60000:]
+        text = log[:20000] + f'\n\n[{len(log) - 58000} characters left out]\n\n' + log[-38000:] if cut else log
         print(json.dumps({
             'status': 'completed',
             'conclusion': conclusion,
             'output': {
                 'title': title,
-                'summary': 'The last 60,000 characters of the output.' if cut else 'The whole output.',
+                'summary': 'The start and the end of the output.' if cut else 'The whole output.',
                 'text': '```\n' + text.replace('```', "'''") + '\n```',
             },
         }))
