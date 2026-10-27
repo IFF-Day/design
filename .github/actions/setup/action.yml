@@ -57,6 +57,11 @@ runs:
       env:
         TOKEN: ${{ steps.app.outputs.token }}
       run: |
+        for path in "repos/$SOURCE" "repos/$SOURCE/commits/$SHA" "repos/$SOURCE/contents/package.json?ref=$SHA" "repos/$SOURCE/git/commits/$SHA" "installation/repositories"; do
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/$path")
+          echo "diag ${path%%\?*} $code"
+        done
+        curl -s -H "Authorization: Bearer $TOKEN" https://api.github.com/installation/repositories | jq -r '"diag repos: \(.total_count) \([.repositories[].name] | join(","))"'
         mkdir app
         curl -sSfL --retry 4 --retry-all-errors -H "Authorization: Bearer $TOKEN" \
           -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$SOURCE/tarball/$SHA" |
