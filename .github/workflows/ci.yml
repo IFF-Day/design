@@ -67,6 +67,8 @@ jobs:
         uses: actions/create-github-app-token@v3
         with:
           client-id: ${{ secrets.APP_CLIENT_ID }}
+          # Kept until it expires: parallel jobs may be given the same one.
+          skip-token-revoke: true
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: IFF-Day
           permission-checks: read
@@ -158,6 +160,8 @@ jobs:
         uses: actions/create-github-app-token@v3
         with:
           client-id: ${{ secrets.APP_CLIENT_ID }}
+          # Kept until it expires: parallel jobs may be given the same one.
+          skip-token-revoke: true
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: IFF-Day
           permission-checks: write

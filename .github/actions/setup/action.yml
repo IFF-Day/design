@@ -29,6 +29,8 @@ runs:
       uses: actions/create-github-app-token@v3
       with:
         client-id: ${{ inputs.client-id }}
+        # Kept until it expires: parallel jobs may be given the same one.
+        skip-token-revoke: true
         private-key: ${{ inputs.private-key }}
         owner: IFF-Day
         permission-checks: write
