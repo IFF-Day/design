@@ -47,21 +47,16 @@ runs:
         id=$(gh api "repos/$SOURCE/check-runs" -f name="$NAME" -f head_sha="$SHA" \
           -f status=in_progress -f details_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .id)
         echo "id=$id" >> "$GITHUB_OUTPUT"
-    # Fetched by hand: actions/checkout prints the commit's subject.
+    # Downloaded by hand: actions/checkout prints the commit's subject.
     - name: Check out the commit
       shell: bash /tmp/quiet {0}
       env:
         TOKEN: ${{ steps.app.outputs.token }}
       run: |
-        git init -q app
-        auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
-        # A new token can take a few seconds to reach every GitHub server.
-        for wait in 0 5 15 30; do
-          sleep "$wait"
-          git -C app -c http.extraHeader="Authorization: basic $auth" fetch -q --depth=1 "https://github.com/$SOURCE.git" "$SHA" && break
-          [ "$wait" = 30 ] && exit 1
-        done
-        git -C app checkout -q FETCH_HEAD
+        mkdir app
+        curl -sSfL --retry 4 --retry-all-errors -H "Authorization: Bearer $TOKEN" \
+          -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$SOURCE/tarball/$SHA" |
+          tar -xz --strip-components=1 -C app
     - name: Check the commit has its CI tasks
       shell: bash
       run: |
