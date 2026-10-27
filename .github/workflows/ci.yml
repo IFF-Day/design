@@ -71,6 +71,7 @@ jobs:
           skip-token-revoke: true
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: IFF-Day
+          repositories: ${{ secrets.SOURCE_NAME }}
           permission-metadata: read
           permission-checks: read
       - id: passed
@@ -103,6 +104,7 @@ jobs:
           check: checks
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
       - run: bash scripts/ci.sh checks
       - if: always()
         uses: ./ci/.github/actions/report
@@ -135,6 +137,7 @@ jobs:
           check: test ${{ matrix.shard }}/4
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
       - run: bash scripts/ci.sh test ${{ matrix.shard }}/4
       - if: always()
         uses: ./ci/.github/actions/report
@@ -165,6 +168,7 @@ jobs:
           skip-token-revoke: true
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: IFF-Day
+          repositories: ${{ secrets.SOURCE_NAME }}
           permission-metadata: read
           permission-checks: write
       - id: verdict
@@ -214,6 +218,7 @@ jobs:
           check: design.iff.day
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
       - env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -267,6 +272,7 @@ jobs:
           check: deploy staging${{ inputs.dry_run && ' (dry run)' || '' }}
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
       - env:
           GH_TOKEN: ${{ steps.setup.outputs.token }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -307,6 +313,7 @@ jobs:
           check: deploy production${{ inputs.dry_run && ' (dry run)' || '' }}
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
       - env:
           GH_TOKEN: ${{ steps.setup.outputs.token }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
