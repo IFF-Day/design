@@ -6,7 +6,7 @@ description: 'The still across the top of a film page, framed on its focus and f
 
 ## Example
 
-The banner at the top of a film page. The still is scaled and moved around the point in `header.focus`, so people stay in frame, and its lower part fades into the page, where the title and poster sit. A 3:2 still loses at most 16% of its height, which brings it to 16:9, the frame BIFF’s own site uses.
+The banner at the top of a film page. The still is scaled and moved around the point in `header.focus`, so people stay in frame, and ends on a hard edge above the title and poster. A 3:2 still loses at most 16% of its height, which brings it to 16:9, the frame BIFF’s own site uses; a window wider than that fills its sides with a blurred copy.
 
 <Example name="components/film-header/basic" stage="fill">
 
@@ -17,5 +17,3 @@ On a film page the banner runs the full width of the window under the header; in
 ## Usage
 
 - The banner takes landscape stills only, never a poster. A film without a still has no banner.
-- The fade is set by the CSS variables `--film-header-fade-above` and `--film-header-below`, 0.4 and 0.416 by default.
-- Add `?header-debug` to a film page’s address for a panel that edits those variables and outlines the steps of the fade.
