@@ -33,6 +33,7 @@ runs:
         skip-token-revoke: true
         private-key: ${{ inputs.private-key }}
         owner: IFF-Day
+        permission-metadata: read
         permission-checks: write
         permission-contents: read
     - id: check
