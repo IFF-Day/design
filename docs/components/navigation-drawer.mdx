@@ -16,4 +16,4 @@ Open it in a narrow window, or open it and widen the window to watch it close. T
 
 ## Usage
 
-`NavigationDrawer` wraps the trigger and the sheet. `NavigationDrawerPopup` brings a hidden Navigation title and a close button. After a link in the sheet is followed, set `open` back to `false`.
+`NavigationDrawer` wraps the trigger and the sheet. `NavigationDrawerPopup` brings a hidden Navigation title and a close button. After a link in the sheet is followed, set `open` back to `false`. It can wrap the whole page: the Dialog root sits only around the sheet, so a `Dialog` elsewhere on the page is not nested in it and keeps its own backdrop.
