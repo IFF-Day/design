@@ -6,7 +6,7 @@ description: 'An initial in a circle, its color derived from the person, the sam
 
 ## Example
 
-There are no profile pictures yet, so `Avatar` draws a circle with the first letter of the name. The ground is one of six brand colors, chosen by hashing `seed` (usually the user ID), so a person has the same color on every page. The light grey ground takes dark text and the others light text. `size` is `xs` (20px), `sm` (28px), `base` (36px), `lg` (56px) or `xl` (112px), from the `--avatar-*` tokens; the letter is 42% of the diameter.
+`Avatar` shows the person's picture from `src`, cropped to the circle. Without one it draws the first letter of the name on one of six brand colors, chosen by hashing `seed` (usually the user ID), so a person has the same color on every page. The light grey ground takes dark text and the others light text. `size` is `xs` (20px), `sm` (28px), `base` (36px), `lg` (56px) or `xl` (112px), from the `--avatar-*` tokens; the letter is 42% of the diameter.
 
 <Example name="components/avatar/basic" />
 
