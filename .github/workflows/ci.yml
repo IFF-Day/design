@@ -273,9 +273,11 @@ jobs:
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repository: ${{ secrets.SOURCE_NAME }}
+      - uses: 1password/install-cli-action@v4
       - env:
           GH_TOKEN: ${{ steps.setup.outputs.token }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           DRY_RUN: ${{ inputs.dry_run }}
@@ -314,9 +316,11 @@ jobs:
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repository: ${{ secrets.SOURCE_NAME }}
+      - uses: 1password/install-cli-action@v4
       - env:
           GH_TOKEN: ${{ steps.setup.outputs.token }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           DRY_RUN: ${{ inputs.dry_run }}
