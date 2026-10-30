@@ -16,8 +16,14 @@ A link opens its page at once: until the page’s data arrives, the route shows 
 
 <Example name="components/skeleton/directory" stage="fill" />
 
+## Loading
+
+`Loading` stands in for an area whose own skeleton is not drawn: a list, a grid of posters, a block of text, or a whole page. Its `shape` is `rows` (the default), `tiles`, `text` or `page`, and `count` sets how many rows, tiles or lines. It fades in like a page skeleton and tells screen readers once that the area is loading; nothing is written on screen.
+
+<Example name="components/skeleton/loading" stage="fill" />
+
 ## Usage
 
-- Use a skeleton where the layout is known before the data: a page’s frame, a grid of cards. Inside a loaded page, a small area that reloads keeps `Loading`.
+- Anything that loads shows a skeleton, never a spinner or a Loading… line. Use a page’s own skeleton where it has one, and `Loading` in the shape of the content everywhere else.
 - Match the real content’s size. A block that is taller or shorter than what replaces it makes the page jump.
 - With reduced motion set in the system, skeletons neither pulse nor fade in.
