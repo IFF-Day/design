@@ -7,7 +7,8 @@ name: CI
 # passed or failed; the commit, the repository and the IDs show as ***.
 #
 # A main commit that passes is deployed to staging and rebuilds design.iff.day
-# and docs/ here; a release commit is deployed to production. The deploy
+# and docs/ here, each only when the commit changes it; a release commit is
+# deployed to production. The deploy
 # secrets sit in the environments staging, production and design, which only
 # this repository's main branch can use.
 run-name: CI
@@ -31,6 +32,10 @@ on:
         default: true
       dry_run:
         description: Build and list pending migrations, but change nothing
+        type: boolean
+        default: false
+      deploy_all:
+        description: Deploy everything, not only what the commit changes
         type: boolean
         default: false
       allow_destructive_migrations:
@@ -220,8 +225,10 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repository: ${{ secrets.SOURCE_NAME }}
       - env:
+          GH_TOKEN: ${{ steps.setup.outputs.token }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DEPLOY_ALL: ${{ inputs.deploy_all }}
         run: bash scripts/ci.sh design "$RUNNER_TEMP/docs"
       - name: Update docs/
         shell: bash
@@ -229,6 +236,8 @@ jobs:
         # On top of the newest pages: the checkout is the commit the run
         # started from, and an earlier run may have updated them since.
         run: |
+          # No pages were written: the commit does not change them.
+          [ -d "$RUNNER_TEMP/docs" ] || exit 0
           git fetch -q origin main
           git checkout -q -B main origin/main
           rm -rf docs
@@ -281,6 +290,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           DRY_RUN: ${{ inputs.dry_run }}
+          DEPLOY_ALL: ${{ inputs.deploy_all }}
         run: bash scripts/ci.sh deploy staging
       - if: always()
         uses: ./ci/.github/actions/report
