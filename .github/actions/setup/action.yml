@@ -11,6 +11,9 @@ inputs:
   repository:
     description: The source repository's name
     required: true
+  sha:
+    description: The commit, when the run was not given one
+    default: ''
 outputs:
   token:
     description: A token of the iffday app
@@ -24,8 +27,10 @@ runs:
     # Read from the event file and masked, so no log shows the commit.
     - name: Read the commit
       shell: bash
+      env:
+        GIVEN: ${{ inputs.sha }}
       run: |
-        sha=$(jq -r .inputs.sha "$GITHUB_EVENT_PATH")
+        sha=${GIVEN:-$(jq -r .inputs.sha "$GITHUB_EVENT_PATH")}
         echo "::add-mask::$sha"
         echo "SHA=$sha" >> "$GITHUB_ENV"
     - id: app

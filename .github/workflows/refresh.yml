@@ -1,0 +1,80 @@
+name: Refresh
+# Every day, and when started by hand, makes staging's data a fresh copy of
+# production's with one task of the private repository's scripts/ci.sh, on the
+# commit staging last deployed. As in CI, these logs only say which step passed
+# or failed; the output goes to that commit's check run. The secrets sit in the
+# environment staging-refresh, which only this repository's main branch can use.
+run-name: Refresh
+on:
+  schedule:
+    - cron: '17 20 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  SOURCE: ${{ secrets.SOURCE_REPOSITORY }}
+  NO_COLOR: '1'
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: staging-refresh
+    # Never beside a staging deploy.
+    concurrency:
+      group: staging
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          sparse-checkout: .github
+      - id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: IFF-Day
+          repositories: ${{ secrets.SOURCE_NAME }}
+          permission-metadata: read
+          permission-checks: read
+          permission-contents: read
+      # The newest main commit whose staging deploy passed.
+      - id: commit
+        name: Find the commit staging runs
+        shell: bash
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          for sha in $(gh api "repos/$SOURCE/commits?sha=main&per_page=30" --jq '.[].sha'); do
+            echo "::add-mask::$sha"
+            if gh api "repos/$SOURCE/commits/$sha/check-runs?check_name=deploy%20staging&status=completed" \
+              --jq '.check_runs[].conclusion' | grep -qx success; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "None of the last 30 main commits has a passing staging deploy."
+          exit 1
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: refresh staging
+          sha: ${{ steps.commit.outputs.sha }}
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
+      - env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PRODUCTION_READ_URL: ${{ secrets.PRODUCTION_READ_URL }}
+        run: bash scripts/ci.sh refresh-staging
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}
