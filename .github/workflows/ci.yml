@@ -118,15 +118,11 @@ jobs:
           check-run: ${{ steps.setup.outputs.check-run }}
           status: ${{ job.status }}
 
-  test:
+  account:
     needs: gate
     if: ${{ !cancelled() && needs.gate.result != 'failure' && needs.gate.outputs.verified != 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: true
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6]
+    timeout-minutes: 15
     defaults:
       run:
         shell: bash /tmp/quiet {0}
@@ -139,11 +135,46 @@ jobs:
       - id: setup
         uses: ./ci/.github/actions/setup
         with:
-          check: test ${{ matrix.shard }}/6
+          check: account
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repository: ${{ secrets.SOURCE_NAME }}
-      - run: bash scripts/ci.sh test ${{ matrix.shard }}/6
+      # Older commits run this task inside checks.
+      - run: |
+          if grep -q '^  account)' scripts/ci.sh; then bash scripts/ci.sh account; else echo "Part of checks."; fi
+      - if: always()
+        uses: ./ci/.github/actions/report
+        with:
+          token: ${{ steps.setup.outputs.token }}
+          check-run: ${{ steps.setup.outputs.check-run }}
+          status: ${{ job.status }}
+
+  test:
+    needs: gate
+    if: ${{ !cancelled() && needs.gate.result != 'failure' && needs.gate.outputs.verified != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+    defaults:
+      run:
+        shell: bash /tmp/quiet {0}
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          sparse-checkout: .github
+      - id: setup
+        uses: ./ci/.github/actions/setup
+        with:
+          check: test ${{ matrix.shard }}/8
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: ${{ secrets.SOURCE_NAME }}
+      - run: bash scripts/ci.sh test ${{ matrix.shard }}/8
       - if: always()
         uses: ./ci/.github/actions/report
         with:
@@ -153,7 +184,7 @@ jobs:
 
   # The commit's overall result, which the release gate looks for.
   result:
-    needs: [gate, checks, test]
+    needs: [gate, checks, account, test]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -181,11 +212,12 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           VERIFIED: ${{ needs.gate.outputs.verified }}
           CHECKS: ${{ needs.checks.result }}
+          ACCOUNT: ${{ needs.account.result }}
           TEST: ${{ needs.test.result }}
         run: |
-          if [ "$VERIFIED" = true ] || { [ "$CHECKS" = success ] && [ "$TEST" = success ]; }; then
+          if [ "$VERIFIED" = true ] || { [ "$CHECKS" = success ] && [ "$ACCOUNT" = success ] && [ "$TEST" = success ]; }; then
             conclusion=success
-          elif [ "$CHECKS" = cancelled ] || [ "$TEST" = cancelled ]; then
+          elif [ "$CHECKS" = cancelled ] || [ "$ACCOUNT" = cancelled ] || [ "$TEST" = cancelled ]; then
             conclusion=cancelled
           else
             conclusion=failure
@@ -194,7 +226,7 @@ jobs:
           echo "passed=$passed" >> "$GITHUB_OUTPUT"
           gh api "repos/$SOURCE/check-runs" -f name=CI -f head_sha="$SHA" -f status=completed \
             -f conclusion="$conclusion" -f details_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            -f "output[title]=checks $CHECKS, tests $TEST" -f "output[summary]=Passed before: ${VERIFIED:-false}" > /dev/null
+            -f "output[title]=checks $CHECKS, account $ACCOUNT, tests $TEST" -f "output[summary]=Passed before: ${VERIFIED:-false}" > /dev/null
 
   # design.iff.day, built from the commit, and its pages as MDX in docs/.
   design:
