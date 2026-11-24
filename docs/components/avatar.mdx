@@ -1,7 +1,7 @@
 ---
 title: 'Avatar'
 group: 'Film and community'
-description: 'An initial in a circle, its color derived from the person, the same on every page.'
+description: "A person's picture in a circle, or their initial on a color derived from them, the same on every page."
 ---
 
 ## Example
@@ -9,6 +9,12 @@ description: 'An initial in a circle, its color derived from the person, the sam
 `Avatar` shows the person's picture from `src`, cropped to the circle. Without one it draws the first letter of the name on one of six brand colors, chosen by hashing `seed` (usually the user ID), so a person has the same color on every page. The light grey ground takes dark text and the others light text. `size` is `xs` (20px), `sm` (28px), `base` (36px), `lg` (56px) or `xl` (112px), from the `--avatar-*` tokens; the letter is 42% of the diameter.
 
 <Example name="components/avatar/basic" />
+
+## Picture
+
+With `src` the picture fills the circle, cropped to cover it, and its `alt` is the name. A picture that fails to load gives way to the initial, so a missing file never leaves a broken image. On iff.day people's pictures come from `avatarUrl` in the API, on user.filmcdn.com.
+
+<Example name="components/avatar/picture" />
 
 ## Usage
 
